@@ -22,7 +22,7 @@ exports.signupValidator = [
     .custom((val) =>
       User.findOne({ email: val }).then((user) => {
         if (user) {
-          return Promise.reject(new Error("E-mail already in user"));
+          return Promise.reject(new Error("E-mail is already exists"));
         }
       })
     ),
@@ -32,14 +32,14 @@ exports.signupValidator = [
     .isLength({ min: 6 })
     .withMessage("Too short password")
     .custom((val, { req }) => {
-      if (val !== req.body.passwordConfirm) {
-        throw new Error("Confirm password does not match");
+      if (val !== req.body.confirmPassword) {
+        throw new Error("Confirmation password does not match");
       }
       return true;
     }),
-  check("passwordConfirm")
+  check("confirmPassword")
     .notEmpty()
-    .withMessage("Password confirmation required"),
+    .withMessage("Confirmation password is  required"),
   validatorMiddleware,
 ];
 

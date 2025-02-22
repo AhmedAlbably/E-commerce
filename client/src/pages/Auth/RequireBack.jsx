@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 function RequireBack() {
   const cookie = Cookie();
-  const token = cookie.get("token");
+  const token = cookie.get("ECT");
     const navigate = useNavigate();
 
   useEffect(() => {

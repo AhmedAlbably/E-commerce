@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import NotFound from "./pages/Auth/NotFound/NotFound";
 import Login from "./pages/Auth/Login/Login";
-import Register from "./pages/Auth/Register/Register";
+import Signup from "./pages/Auth/Signup/Signup";
 import Forbidden from "./pages/Auth/Forbidden/Forbidden";
 import RequireAuth from "./pages/Auth/RequireAuth";
 import RequireBack from "./pages/Auth/RequireBack";
@@ -16,7 +16,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route element={<RequireBack />}>
           <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
         </Route>
 
         <Route element={<RequireAuth allowedRole={["admin", "employee"]} />}>

@@ -60,7 +60,7 @@ exports.googleCallback = asyncHandler(async (req, res) => {
   const user = req.user;
   const token = createToken(user.id);
 
-  res.cookie("token", token, {
+  res.cookie("ECT", token, {
     httpOnly: false,
     secure: false,
     sameSite: "strict",

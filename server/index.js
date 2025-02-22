@@ -67,7 +67,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Limit each IP to 5 requests per `window` (here, per 5 minutes)
 const limiter = rateLimit({
-  windowMs: 10 * 1000, // 5 minutes
+  windowMs: 5 * 1000, // 5 minutes
   max: 5,
   message:
     "Too many accounts created from this IP, please try again after an 5 minutes",

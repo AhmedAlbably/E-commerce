@@ -11,7 +11,7 @@ function RequireAuth({ allowedRole }) {
 
   // Token & Cookie
   const cookie = Cookie();
-  const token = cookie.get("token");
+  const token = cookie.get("ECT");
   const location = useLocation();
 
   // Navigate
