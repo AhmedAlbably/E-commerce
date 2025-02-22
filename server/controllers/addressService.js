@@ -33,7 +33,6 @@ exports.removeAddress = asyncHandler(async (req, res, next) => {
     { new: true }
   );
 
-  console.log(user)
   if (!user) {
     return next(new ApiError("No address found with the provided ID.", 404));
   }

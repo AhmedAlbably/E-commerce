@@ -7,7 +7,7 @@ const sharp = require('sharp');
 // const ApiFeatures = require("../utils/apiFeatures");
 const factory = require("./handlersFactory");
 const Product = require("../models/productModel");
-const { uploadMixOfImages } = require("../udemy-build-ecommerce-api-using-nodejs-master/middlewares/uploadImageMiddleware");
+const { uploadMixOfImages } = require("../middlewares/uploadImageMiddleware");
 
 exports.uploadProductImages = uploadMixOfImages([
   {
