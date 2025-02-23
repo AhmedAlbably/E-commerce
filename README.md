@@ -45,7 +45,7 @@ Bold and ***Italic***
     2. Indented item
 4. Fourth item
 
-===================
+--------------------
 
 - First item
 - Second item
