@@ -44,3 +44,12 @@ Bold and ***Italic***
     1. Indented item
     2. Indented item
 4. Fourth item
+
+===================
+
+- First item
+- Second item
+- Third item
+    - Indented item
+    - Indented item
+- Fourth item
