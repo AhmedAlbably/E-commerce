@@ -21,3 +21,5 @@ Heading level 2
 This is **Bold**
 
 *Italic*
+
+Bold and ***Italic***
