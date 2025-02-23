@@ -19,3 +19,5 @@ Heading level 2
 ---------------
 
 This is **Bold**
+
+*Italic*
