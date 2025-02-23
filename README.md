@@ -53,3 +53,13 @@ Bold and ***Italic***
     - Indented item
     - Indented item
 - Fourth item
+
+---------
+
+  ```json
+  {
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "password": "password123"
+  }
+  ```
