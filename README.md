@@ -18,4 +18,4 @@ Heading level 2
 
 ---------------
 
-**Bold**
+This is **Bold**
