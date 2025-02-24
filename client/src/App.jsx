@@ -7,6 +7,8 @@ import Forbidden from "./pages/Auth/Forbidden/Forbidden";
 import RequireAuth from "./pages/Auth/RequireAuth";
 import RequireBack from "./pages/Auth/RequireBack";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
+import VerifyPassResetCode from "./pages/Auth/VerifyPassResetCode/VerifyPassResetCode";
 function App() {
   return (
     <div className="App">
@@ -17,6 +19,8 @@ function App() {
         <Route element={<RequireBack />}>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/signup" element={<Signup />}></Route>
+          <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+          <Route path="/verify-reset-code" element={<VerifyPassResetCode />}></Route>
         </Route>
 
         <Route element={<RequireAuth allowedRole={["admin", "employee"]} />}>

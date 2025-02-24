@@ -1,11 +1,12 @@
-const { check } = require("express-validator");
+const { body } = require("express-validator");
 const slugify = require("slugify");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const User = require("../../models/userModel");
-
+const { validateExactFields } = require("../validateFields");
 
 exports.signupValidator = [
-  check("name")
+  validateExactFields(["name", "email", "password", "passwordConfirm"]),
+  body("name")
     .notEmpty()
     .withMessage("name is required")
     .isLength({ min: 3 })
@@ -14,51 +15,87 @@ exports.signupValidator = [
       req.body.slug = slugify(val);
       return true;
     }),
-  check("email")
+  body("email")
     .notEmpty()
-    .withMessage("User is required")
+    .withMessage("Email is required")
     .isEmail()
     .withMessage("Invalid email address")
     .custom((val) =>
       User.findOne({ email: val }).then((user) => {
         if (user) {
-          return Promise.reject(new Error("E-mail is already exists"));
+          return Promise.reject(new Error("E-mail already in user"));
         }
       })
     ),
-  check("password")
+  body("password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 6 })
-    .withMessage("Too short password")
+    .withMessage("Too short password, Must be longer than 6 characters")
     .custom((val, { req }) => {
-      if (val !== req.body.confirmPassword) {
-        throw new Error("Confirmation password does not match");
+      if (val !== req.body.passwordConfirm) {
+        throw new Error("Confirm password does not match");
       }
       return true;
     }),
-  check("confirmPassword")
+  body("passwordConfirm")
     .notEmpty()
-    .withMessage("Confirmation password is  required"),
+    .withMessage("Password confirmation required"),
   validatorMiddleware,
 ];
 
 exports.loginValidator = [
-  check("email")
+  validateExactFields(["email", "password"]),
+  body("email")
     .notEmpty()
     .withMessage("User is required")
     .isEmail()
     .withMessage("Invalid email address"),
-  check("password")
+  body("password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 6 })
-    .withMessage("Too short password"),
+    .withMessage("Too short password, Must be longer than 6 characters"),
   validatorMiddleware,
 ];
 
+exports.forgotPasswordValidator = [
+  validateExactFields(["email"]),
+  body("email")
+    .notEmpty()
+    .withMessage("User is required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+  validatorMiddleware,
+];
 
+exports.verifyPassResetCodeValidator = [
+  validateExactFields(["resetCode"]),
+  body("resetCode")
+    .notEmpty()
+    .withMessage("Reset code is required.")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("The reset code must be 6 digits long."),
+  validatorMiddleware,
+];
 
-
-
-
+exports.resetPasswordValidator = [
+  validateExactFields(["email", "newPassword", "passwordConfirm"]),
+  body("email")
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("Too short new password, Must be longer than 6 characters")
+    .custom((val, { req }) => {
+      if (val !== req.body.passwordConfirm) {
+        throw new Error("Confirm password does not match");
+      }
+      return true;
+    }),
+  validatorMiddleware,
+];

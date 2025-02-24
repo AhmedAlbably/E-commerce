@@ -9,3 +9,5 @@ export const GET_ME = "/getOne";
 export const LOGIN = "/auth/login";
 export const SIGNUP = "/auth/signup";
 export const LOGOUT = "/auth/logout";
+export const FORGOT_PASSWORD = "/auth/forgotPassword";
+export const VERIFY_RESET_CODE = "/auth/verifyResetCode";

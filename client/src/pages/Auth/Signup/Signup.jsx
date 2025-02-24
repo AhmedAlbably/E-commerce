@@ -276,10 +276,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { BASE_URL, SIGNUP } from "../../../Api/Api";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -376,10 +379,10 @@ const Signup = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 top-3 text-sm text-blue-600"
+                className="absolute right-3 top-3 text-blue-600"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? "Hide" : "Show"}
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
               </button>
             </div>
             {formik.touched.password && formik.errors.password && (
@@ -391,7 +394,7 @@ const Signup = () => {
             <label className="block text-gray-700">Confirm Password</label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm your password"
                 onChange={formik.handleChange}
@@ -402,10 +405,10 @@ const Signup = () => {
               />
               <button
                 type="button"
-                className="absolute right-3 top-3 text-sm text-blue-600"
-                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-blue-600"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showPassword ? "Hide" : "Show"}
+                <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
               </button>
             </div>
             {formik.touched.confirmPassword && formik.errors.confirmPassword && (

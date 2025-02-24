@@ -150,9 +150,9 @@ exports.allowedTo = (...roles) =>
     next();
   });
 
-// @desc    Forgot password
-// @route   POST /api/v1/auth/forgotPassword
-// @access  Public
+// @desc Forgot password
+// @route POST /api/v1/auth/forgotPassword
+// @access Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
   // 1) Get user by email
   const user = await User.findOne({ email: req.body.email });
@@ -178,20 +178,20 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
   // 3) Send the reset code via email
   const message = `
-  <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; text-align: center;">
-    <div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <h2 style="color: #333;">🔐 Reset Your Password</h2>
-      <p style="font-size: 16px; color: #666;">Hi <strong>${user.name}</strong>,</p>
-      <p style="font-size: 16px; color: #666;">We received a request to reset the password on your <strong>E-shop</strong> account.</p>
-      <p style="font-size: 18px; font-weight: bold; background: #007bff; color: white; padding: 10px; border-radius: 5px; display: inline-block;">
-        ${resetCode}
-      </p>
-      <p style="font-size: 16px; color: #666;">Enter this code to complete the reset.</p>
-      <p style="font-size: 14px; color: #999;">Thanks for helping us keep your account secure.</p>
-      <p style="font-size: 14px; color: #007bff; font-weight: bold;">The E-shop Team</p>
-    </div>
+  <div style="font-family: Arial, sans-serif; padding: 20px; background-color: hashtag#f4f4f4; text-align: center;">
+  <div style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+  <h2 style="color: #333;">🔐 Reset Your Password</h2>
+  <p style="font-size: 16px; color: #666;">Hi <strong>${user.name}</strong>,</p>
+  <p style="font-size: 16px; color: #666;">We received a request to reset the password on your <strong>E-shop</strong> account.</p>
+  <p style="font-size: 18px; font-weight: bold; background: hashtag#007bff; color: white; padding: 10px; border-radius: 5px; display: inline-block;">
+  ${resetCode}
+  </p>
+  <p style="font-size: 16px; color: #666;">Enter this code to complete the reset.</p>
+  <p style="font-size: 14px; color: #999;">Thanks for helping us keep your account secure.</p>
+  <p style="font-size: 14px; color: hashtag#007bff; font-weight: bold;">The E-shop Team</p>
   </div>
-`;
+  </div>
+ `;
   try {
     await sendEmail({
       email: user.email,
@@ -199,6 +199,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
       message,
     });
   } catch (err) {
+    // 4) clear reset token data
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
     user.passwordResetVerified = undefined;
@@ -211,3 +212,68 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ status: "Success", message: "Reset code sent to email" });
 });
+
+// @desc Verify password reset code
+// @route POST /api/v1/auth/verifyResetCode
+// @access Public
+exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
+  // 1) Hash the reset code
+  const hashedResetCode = crypto
+    .createHash("sha256")
+    .update(req.body.resetCode)
+    .digest("hex");
+
+  // 2) Get user based on reset code
+  const user = await User.findOne({
+    passwordResetCode: hashedResetCode,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new ApiError("Reset code invalid or expired"));
+  }
+
+  // 3) Reset code valid
+  user.passwordResetVerified = true;
+  await user.save();
+
+  res.status(200).json({
+    status: "Success",
+  });
+});
+
+// @desc Reset password
+// @route POST /api/v1/auth/resetPassword
+// @access Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  // 1) Get user based on email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(
+      new ApiError(`There is no user with email ${req.body.email}`, 404)
+    );
+  }
+
+  // 2) Check if the reset code has expired
+  if (!user.passwordResetExpires || user.passwordResetExpires < Date.now()) {
+    return next(new ApiError("Reset code has expired", 400));
+  }
+
+  // 3) Check if reset code verified
+  if (!user.passwordResetVerified) {
+    return next(new ApiError("Reset code not verified", 400));
+  }
+
+  // 4) Update user password and clear reset token data
+  user.password = req.body.newPassword;
+  user.passwordResetCode = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetVerified = undefined;
+
+  await user.save();
+
+  // 5) if everything is ok, generate token
+  const token = createToken(user._id);
+  res.status(200).json({ token });
+});
+
+

@@ -5,6 +5,9 @@ const passport = require("passport");
 const {
   signupValidator,
   loginValidator,
+  forgotPasswordValidator,
+  verifyPassResetCodeValidator,
+  resetPasswordValidator,
 } = require("../utils/validators/authValidator");
 
 const {
@@ -12,13 +15,19 @@ const {
   login,
   googleCallback,
   forgotPassword,
+  verifyPassResetCode,
+  resetPassword,
 } = require("../controllers/authService");
 
 router.route("/signup").post(signupValidator, signup);
 router.route("/login").post(loginValidator, login);
-router.post("/forgotPassword", forgotPassword);
-// router.post('/verifyResetCode', verifyPassResetCode);
-// router.put('/resetPassword', resetPassword);
+router.post("/forgotPassword", forgotPasswordValidator, forgotPassword);
+router.post(
+  "/verifyResetCode",
+  verifyPassResetCodeValidator,
+  verifyPassResetCode
+);
+router.put("/resetPassword", resetPasswordValidator, resetPassword);
 
 // Sign in with google
 router.get(
