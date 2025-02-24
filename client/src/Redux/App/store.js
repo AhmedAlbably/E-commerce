@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import emailReducer from "../Features/EmailSlice/emailSlice";
+import resetDataPassReducer from "../Features/resetDataPassSlice/resetDataPassSlice";
 
 export const store = configureStore({
   reducer: {
-    email: emailReducer,
+    resetDataPass: resetDataPassReducer,
   },
 });
 

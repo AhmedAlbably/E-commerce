@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, FORGOT_PASSWORD } from "../../../Api/Api";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { saveEmail } from "../../../Redux/Features/EmailSlice/emailSlice";
+import { saveEmail } from "../../../Redux/Features/resetDataPassSlice/resetDataPassSlice";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

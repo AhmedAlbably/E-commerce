@@ -6,10 +6,10 @@
 // const VerifyPassResetCode = () => {
 //   const [resetCode, setResetCode] = useState("");
 //   const navigate = useNavigate();
- 
+
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
-    
+
 //     try {
 //       const res = await axios.post(`${BASE_URL}${VERIFY_RESET_CODE}`, { resetCode });
 //       if (res.status === 200) {
@@ -68,14 +68,19 @@
 
 // export default VerifyPassResetCode;
 
-// ! new version of my code 
+// ! new version of my code
 
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL, VERIFY_RESET_CODE } from "./../../../Api/Api";
+import { useDispatch } from "react-redux";
+import { saveResetCode } from "../../../Redux/Features/resetDataPassSlice/resetDataPassSlice";
 
 const VerifyResetCode = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return; // Allow only numbers
@@ -88,12 +93,23 @@ const VerifyResetCode = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const enteredCode = code.join("");
     if (enteredCode.length === 6) {
-      console.log("Verified Code:", enteredCode);
-      navigate("/reset-password"); // Redirect to reset password
+      try {
+        const res = await axios.post(`${BASE_URL}${VERIFY_RESET_CODE}`, {
+          resetCode: enteredCode,
+        });
+        if (res.status === 200) {
+          console.log(res.data); // Reset password token (for the next step)
+          dispatch(saveResetCode(enteredCode));
+          navigate("/reset-password", { replace: true });
+        }
+      } catch (error) {
+        console.log(error);
+        console.log(enteredCode);
+      }
     }
   };
 
@@ -126,7 +142,9 @@ const VerifyResetCode = () => {
           <button
             type="submit"
             className={`w-full bg-blue-600 text-white py-3 rounded-lg transition ${
-              code.join("").length !== 6 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              code.join("").length !== 6
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-700"
             }`}
             disabled={code.join("").length !== 6}
           >
@@ -135,10 +153,8 @@ const VerifyResetCode = () => {
         </form>
 
         <p className="text-center text-gray-600 mt-4">
-          Didn't receive a code?{" "}
-          <button className="text-blue-600 hover:underline">
-            Resend Code
-          </button>
+          Didn't receive a code?
+          <button className="text-blue-600 hover:underline">Resend Code</button>
         </p>
       </div>
     </section>
