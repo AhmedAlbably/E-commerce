@@ -28,6 +28,7 @@
     "prefer-const": "off",
     "node/no-extraneous-require": "off",
     "no-restricted-globals": "off",
+    "import/extensions": "off",
     "node/no-unsupported-features/node-builtins": "off",
     "import/no-extraneous-dependencies": "off",
     // "prefer-destructuring": ["warn", {"object": true, "array": false}],
