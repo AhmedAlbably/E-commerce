@@ -30,7 +30,7 @@ const ForgotPassword = () => {
           Find Your Account
         </h1>
         <p className="text-gray-600 text-center mt-2">
-          Enter your email to search for your account.
+          Enter your email send it to your account.
         </p>
 
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
