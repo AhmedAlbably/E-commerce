@@ -121,7 +121,7 @@ const Aside = () => {
   };
 
   return (
-    <aside className="relative">
+    <aside className="relative ">
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-white shadow-lg transform transition-all duration-300 ease-in-out ${
