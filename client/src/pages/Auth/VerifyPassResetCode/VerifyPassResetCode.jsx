@@ -71,25 +71,81 @@
 // ! new version of my code
 
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL, VERIFY_RESET_CODE } from "./../../../Api/Api";
-import { useDispatch } from "react-redux";
+import {
+  BASE_URL,
+  FORGOT_PASSWORD,
+  VERIFY_RESET_CODE,
+} from "./../../../Api/Api";
+import { useDispatch, useSelector } from "react-redux";
 import { saveResetCode } from "../../../Redux/Features/resetDataPassSlice/resetDataPassSlice";
 
 const VerifyResetCode = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [timer, setTimer] = useState(60);
+  const inputsRef = useRef([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { email } = useSelector((state) => state.resetDataPass);
+
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+  };
 
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Allow only numbers
+    if (!/^\d*$/.test(value)) return;
     const newCode = [...code];
-    newCode[index] = value;
+    newCode[index] = value.slice(-1);
     setCode(newCode);
 
     if (value && index < 5) {
-      document.getElementById(`code-${index + 1}`).focus();
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index, event) => {
+    if (event.key === "Backspace" && !code[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (event) => {
+    event.preventDefault();
+    const pastedData = event.clipboardData.getData("text").trim();
+
+    if (/^\d{6}$/.test(pastedData)) {
+      const newCode = pastedData.split("");
+      setCode(newCode);
+
+      newCode.forEach((val, i) => {
+        if (inputsRef.current[i]) inputsRef.current[i].value = val;
+      });
+
+      inputsRef.current[5]?.focus();
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const res = await axios.post(`${BASE_URL}${FORGOT_PASSWORD}`, { email });
+      if (res.status === 200) {
+        console.log(res.data);
+        setTimer(120);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -102,13 +158,12 @@ const VerifyResetCode = () => {
           resetCode: enteredCode,
         });
         if (res.status === 200) {
-          console.log(res.data); // Reset password token (for the next step)
+          console.log(res.data);
           dispatch(saveResetCode(enteredCode));
           navigate("/reset-password", { replace: true });
         }
       } catch (error) {
         console.log(error);
-        console.log(enteredCode);
       }
     }
   };
@@ -125,14 +180,16 @@ const VerifyResetCode = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex justify-center gap-2">
-            {code.map((digit, index) => (
+            {code.map((_, index) => (
               <input
                 key={index}
-                id={`code-${index}`}
+                ref={(el) => (inputsRef.current[index] = el)}
                 type="text"
                 maxLength="1"
-                value={digit}
+                value={code[index]}
                 onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={index === 0 ? handlePaste : undefined}
                 className="w-12 h-12 text-center text-xl border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
@@ -153,8 +210,16 @@ const VerifyResetCode = () => {
         </form>
 
         <p className="text-center text-gray-600 mt-4">
-          Didn't receive a code?
-          <button className="text-blue-600 hover:underline">Resend Code</button>
+          {timer > 0 ? (
+            <span className="text-red-500">Resend Code in {formatTime(timer)}</span>
+          ) : (
+            <button
+              onClick={handleResendCode}
+              className="text-blue-600 hover:underline cursor-pointer"
+            >
+              Resend Code
+            </button>
+          )}
         </p>
       </div>
     </section>
@@ -162,3 +227,4 @@ const VerifyResetCode = () => {
 };
 
 export default VerifyResetCode;
+

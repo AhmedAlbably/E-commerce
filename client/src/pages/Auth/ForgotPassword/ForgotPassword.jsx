@@ -30,17 +30,17 @@ const ForgotPassword = () => {
           Find Your Account
         </h1>
         <p className="text-gray-600 text-center mt-2">
-          Enter your email or phone number to search for your account.
+          Enter your email to search for your account.
         </p>
 
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-gray-700 font-medium">
-              Email or Phone Number
+              Email
             </label>
             <input
               type="text"
-              placeholder="Enter email or phone"
+              placeholder="Enter email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
