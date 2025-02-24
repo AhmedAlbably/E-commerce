@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .reorder {
+    width: 100%;
+  }
+
+  .reorder > :nth-child(2) {
+    width: 60%;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .reorder > :last-child,
+  .reorder > :last-child form,
+  .reorder > :last-child input {
+    width: 100% !important;
+  }
+}
