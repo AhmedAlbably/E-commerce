@@ -26,13 +26,17 @@ dbConnection();
 const app = express();
 const port = process.env.PORT || 8000;
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//   })
-// );
-app.use(cors());
-app.options("*", cors());
+app.use(
+  cors({
+    origin: "https://first-app-vert-eta.vercel.app/",
+    credentials: true, 
+    methods: ["GET", "POST", "PUT", "DELETE"], 
+    allowedHeaders: ["Content-Type", "Authorization"], 
+  })
+);
+
+// app.use(cors());
+// app.options("*", cors());
 
 // compress all responses
 app.use(compression());

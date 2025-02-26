@@ -60,12 +60,18 @@ exports.googleCallback = asyncHandler(async (req, res) => {
   const user = req.user;
   const token = createToken(user.id);
 
-  res.cookie("token", token, {
-    httpOnly: false,
-    secure: false,
-    sameSite: "strict",
+  res.cookie("ECT", token, {
+    // httpOnly: false,
+    // secure: false,
+    // sameSite: "strict",
+    // path: "/",
+    httpOnly: true,  // يمنع الوصول من JavaScript
+    secure: true,    // مطلوب لأن SameSite=None
+    sameSite: "None", // يسمح بالطلبات بين النطاقات المختلفة (Cross-site)
     path: "/",
-  });
+  }); 
+
+  console.log(res.getHeaders());
 
   req.logout((err) => {
     if (err) {
@@ -73,7 +79,7 @@ exports.googleCallback = asyncHandler(async (req, res) => {
     }
     req.session.destroy(() => {
       res.clearCookie("connect.sid");
-      res.redirect("http://localhost:3000/");
+      res.redirect("https://first-app-vert-eta.vercel.app//dashboard");
     });
   });
 });
