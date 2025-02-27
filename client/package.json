@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.5.1",
     "@tailwindcss/vite": "^4.0.8",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "cookie-universal": "^2.2.2",
     "formik": "^2.4.6",
